@@ -1,27 +1,46 @@
-﻿using NameSorter.Domain;
+﻿using NameSorter;
+using NameSorter.Domain;
 using NameSorter.Input;
+using NameSorter.Output;
 using NameSorter.Sorting;
 
-var source = new FileNameSource(args[0]);
-var parser = new PersonNameParser();
-var comparer = new LastNameThenGivenNamesComparer();
+const string OutputFileName = "sorted-names-list.txt";
 
-var lines = source.ReadNames().ToList();
-
-Console.WriteLine($"Printing unsorted data... ({args[0]}) \n");
-
-foreach (var line in lines)
+if (args.Length != 1)
 {
-    Console.WriteLine(line);
+    var problem = args.Length == 0
+        ? "No input file was given."
+        : $"Expected 1 input file but got {args.Length}.";
+
+    Console.Error.WriteLine($"Error: {problem}");
+    Console.Error.WriteLine("Usage: name-sorter <input-file>");
+    Console.Error.WriteLine("Example: name-sorter ./unsorted-names-list.txt");
+    return 1;
 }
 
-var sortedNames = lines
-    .Select(parser.Parse)
-    .OrderBy(name => name, comparer);
-
-Console.WriteLine();
-Console.WriteLine("Printing sorted version... \n");
-foreach (var name in sortedNames)
+try
 {
-    Console.WriteLine(name);
+    var app = new NameSorterApp(
+        new FileNameSource(args[0]),
+        new PersonNameParser(),
+        new LastNameThenGivenNamesComparer(),
+        [
+            new ConsoleNameWriter(Console.Out), 
+            new FileNameWriter(OutputFileName)
+        ]
+    );
+
+    app.Run();
+    return 0;
+}
+
+//intentionally limiting error catching to get stacktrace for actually unexpected errors.
+catch (Exception ex) when (ex is 
+    IOException or 
+    UnauthorizedAccessException or 
+    FormatException or 
+    ArgumentException
+) {
+    Console.Error.WriteLine($"Error: {ex.Message}");
+    return 1;
 }
