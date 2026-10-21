@@ -1,7 +1,4 @@
 ﻿using NameSorter.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NameSorter.Tests.Domain
 {

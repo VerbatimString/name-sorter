@@ -1,8 +1,5 @@
 ﻿using NameSorter.Input;
 using NameSorter.Tests.TestHelpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NameSorter.Tests.Input
 {

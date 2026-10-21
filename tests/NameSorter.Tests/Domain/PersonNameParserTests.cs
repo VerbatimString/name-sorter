@@ -1,7 +1,4 @@
 ﻿using NameSorter.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NameSorter.Tests.Domain
 {
@@ -36,6 +33,13 @@ namespace NameSorter.Tests.Domain
         public void Parse_RejectsLinesThatAreNotValidNames(string line)
         {
             Assert.Throws<FormatException>(() => _parser.Parse(line));
+        }
+
+        [Test]
+        public void Parse_ErrorMessageIncludesTheInvalidLine()
+        {
+            var exception = Assert.Throws<FormatException>(() => _parser.Parse("Cher"));
+            Assert.That(exception.Message, Does.Contain("Cher"));
         }
     }
 }
